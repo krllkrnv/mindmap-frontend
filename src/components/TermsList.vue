@@ -2,11 +2,6 @@
   <div class="terms-list">
     <div class="header">
       <h1>Словарь терминов</h1>
-      <div class="actions">
-        <button @click="$router.push('/graph')" class="btn btn-secondary">
-          Граф связей
-        </button>
-      </div>
     </div>
 
     <div v-if="loading" class="loading">
@@ -44,12 +39,12 @@ export default {
     const loading = ref(true)
     const error = ref(null)
 
-    const loadTerms = () => {
+    const loadTerms = async () => {
       try {
         loading.value = true
         error.value = null
-        const data = dataService.getTerms(1, 100) // Запрашиваем все термины
-        terms.value = data.terms // Берем массив терминов из ответа
+        const data = await dataService.getTerms(1, 100) // Запрашиваем все термины
+        terms.value = data.terms || [] // Берем массив терминов из ответа
       } catch (err) {
         error.value = err.message || 'Ошибка загрузки терминов'
         console.error('Ошибка загрузки терминов:', err)

@@ -2,7 +2,6 @@
 import termsData from '../data/terms.json'
 
 class TermsDataService {
-  // Получить все термины с пагинацией и поиском
   getTerms(page = 1, perPage = 10, search = '') {
     let filteredTerms = [...termsData]
     
@@ -33,12 +32,10 @@ class TermsDataService {
     }
   }
 
-  // Получить термин по ID
   getTerm(id) {
     return termsData.find(term => term.id === parseInt(id)) || null
   }
 
-  // Поиск терминов по запросу
   searchTerms(query) {
     const queryLower = query.toLowerCase()
     return termsData.filter(term => 
@@ -48,11 +45,9 @@ class TermsDataService {
     )
   }
 
-  // Получить все термины (для графа)
   getAllTerms() {
     return termsData
   }
 }
 
 export default new TermsDataService()
-

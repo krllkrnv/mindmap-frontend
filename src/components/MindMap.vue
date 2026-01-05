@@ -59,26 +59,34 @@ const measureContainer = () => {
 
 const buildGraph = (terms) => {
   
-  // Подготавливаем данные с начальными координатами
-  const nodes = terms.map(t => ({
-    id: t.id,
-    term: t.term,
-    definition: t.definition,
-    category: t.category,
-    // Инициализируем начальные координаты
-    x: width.value / 2 + (Math.random() - 0.5) * 200,
-    y: height.value / 2 + (Math.random() - 0.5) * 200
-  }))
+  // Подготавливаем данные с начальными координатами (размещение по кругу)
+  const nodes = terms.map((t, i) => {
+    // Размещаем узлы по кругу для начального распределения
+    const angle = (i / terms.length) * 2 * Math.PI
+    const radius = Math.min(width.value, height.value) * 0.3
+    return {
+      id: t.id,
+      term: t.term,
+      definition: t.definition,
+      category: t.category,
+      x: width.value / 2 + Math.cos(angle) * radius,
+      y: height.value / 2 + Math.sin(angle) * radius
+    }
+  })
 
   const links = []
   terms.forEach(t => {
-    (t.related_terms || []).forEach(name => {
-      const target = terms.find(x => x.term === name)
+    (t.relations || []).forEach(relation => {
+      const target = terms.find(x => x.term === relation.term)
       if (target) {
         const sourceNode = nodes.find(n => n.id === t.id)
         const targetNode = nodes.find(n => n.id === target.id)
         if (sourceNode && targetNode) {
-          links.push({ source: sourceNode, target: targetNode })
+          links.push({ 
+            source: sourceNode, 
+            target: targetNode,
+            relationType: relation.type
+          })
         }
       }
     })
@@ -96,20 +104,23 @@ const buildGraph = (terms) => {
   // Очищаем предыдущий граф
   d3Svg.selectAll('*').remove()
 
-  // Создаем стрелки для связей
-  d3Svg.append('defs').append('marker')
+  // Создаем defs для маркеров стрелок
+  const defs = d3Svg.append('defs')
+  
+  // Создаем маркер-стрелку
+  const arrowMarker = defs.append('marker')
     .attr('id', 'arrowhead')
-    .attr('viewBox', '-0 -5 10 10')
-    .attr('refX', 30)
+    .attr('viewBox', '0 -5 10 10')
+    .attr('refX', 40)  // Расстояние от конца линии до начала стрелки (радиус узла + небольшой отступ)
     .attr('refY', 0)
+    .attr('markerWidth', 10)
+    .attr('markerHeight', 10)
     .attr('orient', 'auto')
-    .attr('markerWidth', 8)
-    .attr('markerHeight', 8)
-    .attr('xoverflow', 'visible')
-    .append('svg:path')
-    .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+  
+  arrowMarker.append('path')
+    .attr('d', 'M0,-5L10,0L0,5')
     .attr('fill', '#999')
-    .style('stroke', 'none')
+    .attr('stroke', 'none')
 
   // Создаем главную группу для всего графа (для зума)
   const mainGroup = d3Svg.append('g').attr('class', 'main-group')
@@ -123,8 +134,9 @@ const buildGraph = (terms) => {
     .data(links)
     .join('line')
     .attr('stroke', '#999')
-    .attr('stroke-width', 2)
-    .attr('marker-end', 'url(#arrowhead)')  // Добавляем стрелку
+    .attr('stroke-width', 1.5)
+    .attr('opacity', 0.6)
+    .attr('marker-end', 'url(#arrowhead)')  // Добавляем стрелку на конце линии
     // Устанавливаем начальные координаты
     .attr('x1', d => d.source.x)
     .attr('y1', d => d.source.y)
@@ -178,12 +190,25 @@ const buildGraph = (terms) => {
     .style('white-space', 'pre-line')
     .style('font-family', 'Arial, sans-serif')
 
+  // Находим полный объект термина для отображения источников
+  const getFullTerm = (nodeId) => terms.find(t => t.id === nodeId)
+  
   // Добавляем события для мгновенного показа tooltip
   circles
     .on('mouseenter', function(event, d) {
+      const fullTerm = getFullTerm(d.id)
+      let tooltipContent = `${d.term}\n\n${d.definition}\n\nКатегория: ${d.category}`
+      
+      if (fullTerm && fullTerm.sources && fullTerm.sources.length > 0) {
+        tooltipContent += '\n\nИсточники:'
+        fullTerm.sources.forEach(source => {
+          tooltipContent += `\n${source.citation} ${source.full}`
+        })
+      }
+      
       tooltip
         .style('opacity', 1)
-        .html(`${d.term}\n\n${d.definition}\n\nКатегория: ${d.category}`)
+        .html(tooltipContent)
         .style('left', (event.pageX + 10) + 'px')
         .style('top', (event.pageY - 10) + 'px')
     })
@@ -209,6 +234,33 @@ const buildGraph = (terms) => {
     .attr('fill', '#2c3e50')
     .style('pointer-events', 'none')  // Текст не мешает клику на узел
 
+  // Создаем группу для меток связей (чтобы фон и текст были вместе)
+  const linkLabelGroup = linkGroup.selectAll('g.link-label-group')
+    .data(links)
+    .join('g')
+    .attr('class', 'link-label-group')
+    .style('pointer-events', 'none')
+
+  // Создаем фон для текста
+  const linkLabelBgs = linkLabelGroup.append('rect')
+    .attr('class', 'link-label-bg')
+    .attr('fill', 'rgba(255, 255, 255, 0.95)')
+    .attr('stroke', '#ccc')
+    .attr('stroke-width', 1)
+    .attr('rx', 4)
+    .attr('height', 20)
+
+  // Создаем текстовые метки на дугах (связях)
+  const linkLabels = linkLabelGroup.append('text')
+    .attr('class', 'link-label')
+    .text(d => d.relationType || '')
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'middle')
+    .attr('font-size', '11px')
+    .attr('fill', '#555')
+    .attr('font-weight', '500')
+    .style('user-select', 'none')
+
   // Добавляем зум и панорамирование
   zoomBehavior = d3.zoom()
     .scaleExtent([0.1, 4])  // Минимальный и максимальный зум
@@ -220,10 +272,27 @@ const buildGraph = (terms) => {
   
   // Создаем симуляцию с оптимальными расстояниями
   simulation = d3.forceSimulation(nodes)
-    .force('link', d3.forceLink(links).id(d => d.id).distance(80))  // Уменьшили с 120 до 80
-    .force('charge', d3.forceManyBody().strength(-600))  // Уменьшили отталкивание с -800 до -600
-    .force('center', d3.forceCenter(width.value / 2, height.value / 2))
-    .force('collision', d3.forceCollide().radius(60))  // Уменьшили радиус коллизии с 80 до 60
+    .force('link', d3.forceLink(links).id(d => d.id).distance(200))  // Увеличили расстояние между связанными узлами
+    .force('charge', d3.forceManyBody().strength(-2000))  // Увеличили отталкивание для большего пространства
+    .force('center', d3.forceCenter(width.value / 2, height.value / 2).strength(0.1))  // Слабее притяжение к центру
+    .force('collision', d3.forceCollide().radius(100))  // Увеличили радиус коллизии для предотвращения наложения
+    .alphaDecay(0.01)  // Медленнее затухание для более плавной анимации
+    .alpha(1)  // Начать с полной энергии
+    .velocityDecay(0.5)  // Больше трение для стабильности
+
+  // Функция для вычисления позиции текста на середине дуги
+  const getLinkLabelPosition = (link) => {
+    const dx = link.target.x - link.source.x
+    const dy = link.target.y - link.source.y
+    const distance = Math.sqrt(dx * dx + dy * dy)
+    const angle = Math.atan2(dy, dx)
+    
+    // Позиция на середине дуги
+    const midX = (link.source.x + link.target.x) / 2
+    const midY = (link.source.y + link.target.y) / 2
+    
+    return { x: midX, y: midY, angle: angle }
+  }
 
   // Обновляем позиции при каждом тике
   simulation.on('tick', () => {
@@ -240,6 +309,31 @@ const buildGraph = (terms) => {
     labels
       .attr('x', d => d.x)
       .attr('y', d => d.y + 50)
+
+    // Обновляем позиции текстовых меток на дугах
+    linkLabelGroup.each(function(d) {
+      const pos = getLinkLabelPosition(d)
+      const group = d3.select(this)
+      
+      // Получаем размеры текста для фона
+      const textElement = group.select('text.link-label').node()
+      if (textElement) {
+        const bbox = textElement.getBBox()
+        const padding = 4
+        
+        // Обновляем фон
+        group.select('rect.link-label-bg')
+          .attr('x', pos.x - bbox.width / 2 - padding)
+          .attr('y', pos.y - bbox.height / 2 - padding)
+          .attr('width', bbox.width + padding * 2)
+          .attr('height', bbox.height + padding * 2)
+        
+        // Обновляем текст
+        group.select('text.link-label')
+          .attr('x', pos.x)
+          .attr('y', pos.y)
+      }
+    })
   })
 
 }

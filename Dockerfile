@@ -1,41 +1,28 @@
-# Многоэтапная сборка для оптимизации размера образа
-FROM node:20-alpine AS builder
-
-# Установка рабочей директории
-WORKDIR /app
-
-# Копирование файлов зависимостей
+# Этап 1: Сборка фронтенда
+FROM node:20-alpine AS frontend-builder
+WORKDIR /app/frontend
 COPY package*.json ./
-
-# Установка зависимостей
+COPY vite.config.js ./
 RUN npm ci
-
-# Копирование исходного кода
-COPY . .
-
-# Сборка приложения
+COPY src ./src
+COPY index.html ./
+COPY jsconfig.json ./
+COPY public ./public
 RUN npm run build
 
-# Финальный образ с nginx
-FROM nginx:alpine
+# Этап 2: Подготовка backend
+FROM node:20-alpine AS backend-setup
+WORKDIR /app/backend
+COPY backend/package*.json ./
+RUN npm install --production
+COPY backend/server.js ./
+COPY backend/data ./data
 
-# Копирование собранного приложения в nginx
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Копирование конфигурации nginx (опционально, для SPA роутинга)
-RUN echo 'server { \
-    listen 80; \
-    server_name localhost; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
-
-# Открытие порта
-EXPOSE 80
-
-# Запуск nginx
-CMD ["nginx", "-g", "daemon off;"]
-
+# Финальный образ
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=backend-setup /app/backend ./backend
+COPY --from=frontend-builder /app/frontend/dist ./backend/public
+EXPOSE 3000
+WORKDIR /app/backend
+CMD ["node", "server.js"]

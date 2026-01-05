@@ -7,14 +7,21 @@
     
     <p class="term-definition">{{ term.definition }}</p>
     
-    <div v-if="term.related_terms && term.related_terms.length > 0" class="related-terms">
+    <div v-if="term.relations && term.relations.length > 0" class="related-terms">
       <strong>Связанные термины:</strong>
-      <span v-for="(related, index) in term.related_terms" :key="index" class="related-tag">
-        {{ related }}
-      </span>
+      <div v-for="(relation, index) in term.relations" :key="index" class="relation-item">
+        <span class="relation-type">{{ relation.type }}:</span>
+        <span class="related-tag">{{ relation.term }}</span>
+      </div>
     </div>
     
-    
+    <div v-if="term.sources && term.sources.length > 0" class="sources">
+      <strong>Источники:</strong>
+      <div v-for="(source, index) in term.sources" :key="index" class="source-item">
+        <span class="citation-badge">{{ source.citation }}</span>
+        <span class="source-text">{{ source.full }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -79,6 +86,21 @@ defineProps({
 .related-terms strong {
   color: #2c3e50;
   margin-right: 8px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.relation-item {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.relation-type {
+  color: #7f8c8d;
+  font-size: 0.85em;
+  font-style: italic;
 }
 
 .related-tag {
@@ -87,9 +109,43 @@ defineProps({
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 0.9em;
-  margin-right: 6px;
   display: inline-block;
-  margin-bottom: 4px;
+}
+
+.sources {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e9ecef;
+}
+
+.sources strong {
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.source-item {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.citation-badge {
+  background: #3498db;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.source-text {
+  color: #555;
+  font-size: 0.85em;
+  line-height: 1.5;
+  flex: 1;
 }
 
 </style>
