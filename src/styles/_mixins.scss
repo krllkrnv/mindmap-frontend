@@ -1,0 +1,122 @@
+@import './variables';
+
+@mixin flex-between($align: center) {
+  display: flex;
+  justify-content: space-between;
+  align-items: $align;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin card {
+  @include academic-card;
+}
+
+@mixin button-base {
+  padding: $spacing-md $spacing-2xl;
+  border-radius: $radius-md;
+  transition: background-color $transition-base;
+  cursor: pointer;
+  border: none;
+  font-size: $font-size-base;
+}
+
+@mixin link {
+  color: $color-primary;
+  text-decoration: none;
+  transition: all $transition-base;
+}
+
+@mixin transition($properties: all) {
+  transition: $properties $transition-base;
+}
+
+// Academic style mixins
+@mixin heading-serif {
+  font-family: $font-family-serif;
+  font-weight: 600;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+}
+
+@mixin heading-h1 {
+  @include heading-serif;
+  font-size: $font-size-xl;
+  margin-bottom: $spacing-2xl;
+}
+
+@mixin heading-h2 {
+  @include heading-serif;
+  font-size: $font-size-lg;
+  margin-bottom: $spacing-xl;
+}
+
+@mixin heading-h3 {
+  @include heading-serif;
+  font-size: $font-size-md;
+  margin-bottom: $spacing-lg;
+}
+
+@mixin academic-card {
+  background: $color-white;
+  border: 0.05rem solid $color-border;
+  border-radius: $radius-md;
+  padding: $spacing-2xl;
+  box-shadow: $shadow-sm;
+  transition: box-shadow $transition-base, border-color $transition-base;
+}
+
+@mixin academic-card-hover {
+  box-shadow: $shadow-md;
+  border-color: $color-border-dark;
+}
+
+@mixin divider {
+  border: none;
+  border-top: 0.05rem solid $color-border;
+  margin: $spacing-3xl 0;
+}
+
+@mixin academic-link {
+  color: $color-primary;
+  text-decoration: none;
+  border-bottom: 0.1rem solid transparent;
+  transition: color $transition-base, border-color $transition-base;
+  
+  &:hover {
+    color: $color-primary-hover;
+    border-bottom-color: $color-primary-hover;
+  }
+}
+
+@mixin academic-button {
+  padding: $spacing-md $spacing-2xl;
+  border-radius: $radius-sm;
+  border: 0.05rem solid $color-primary;
+  background: transparent;
+  color: $color-primary;
+  font-size: $font-size-base;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-base;
+  outline: none;
+  
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+  }
+  
+  &:active {
+    transform: translateY(0.1rem);
+    outline: none !important;
+  }
+  
+  &:focus {
+    outline: none !important;
+  }
+}
+

@@ -2,99 +2,179 @@
   <div class="app">
     <header class="app-header">
       <h1>Глоссарий терминов ВКР</h1>
+      <p class="app-subtitle">Систематизированный справочник терминов выпускной квалификационной работы</p>
     </header>
 
-    <nav class="main-nav">
-      <router-link to="/terms" class="nav-link">
+    <nav class="main-nav" role="navigation" aria-label="Основная навигация">
+      <router-link to="/terms" class="nav-tab" aria-current="page">
         Список терминов
       </router-link>
-      <router-link to="/graph" class="nav-link">
+      <router-link to="/graph" class="nav-tab" aria-current="page">
         Граф связей
       </router-link>
     </nav>
 
     <main class="main-content">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
   </div>
 </template>
 
 <script setup>
-// Простой App.vue с роутером
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
 .app {
   margin: 0 auto;
-  padding: 20px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: $spacing-2xl;
+  max-width: $max-width-container;
 }
 
 .app-header {
   text-align: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #ecf0f1;
+  margin-bottom: $spacing-4xl;
+  padding-bottom: $spacing-2xl;
+  border-bottom: 0.05rem solid $color-border;
 }
 
 .app-header h1 {
-  color: #2c3e50;
-  font-size: 2.5em;
-  margin-bottom: 10px;
+  @include heading-h1;
+  margin-bottom: $spacing-lg;
 }
 
-.app-header p {
-  color: #7f8c8d;
-  font-size: 1.1em;
+.app-subtitle {
+  color: $color-text-tertiary;
+  font-size: $font-size-base;
+  font-style: italic;
+  margin: 0;
+  line-height: $line-height-base;
 }
 
 .main-nav {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #ecf0f1;
+  @include flex-center;
+  gap: 0;
+  margin-bottom: $spacing-4xl;
+  border-bottom: 0.05rem solid $color-border;
+  position: relative;
 }
 
-.nav-link {
-  padding: 12px 24px;
+.nav-tab {
+  padding: $spacing-lg $spacing-2xl;
+  color: $color-text-tertiary;
+  font-weight: 500;
+  font-size: $font-size-base;
+  position: relative;
+  border: none;
+  border-bottom: 0.2rem solid transparent;
+  margin-bottom: -0.05rem;
+  background: transparent;
+  transition: color $transition-base, border-color $transition-base;
   text-decoration: none;
-  color: #7f8c8d;
-  border-radius: 6px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-}
-
-.nav-link:hover {
-  color: #3498db;
-  background: #f8f9fa;
-  border-color: #3498db;
-}
-
-.nav-link.router-link-active {
-  color: #3498db;
-  background: #e3f2fd;
-  border-color: #3498db;
+  
+  &:hover {
+    color: $color-primary;
+    border-bottom-color: transparent;
+  }
+  
+  &.router-link-active {
+    color: $color-primary;
+    border: none;
+    border-bottom: 0.2rem solid $color-primary;
+    font-weight: 600;
+  }
+  
+  &:focus {
+    outline: none !important;
+  }
 }
 
 .main-content {
   min-height: 60vh;
+  animation: fadeIn 0.4s ease-in;
 }
 
-@media (max-width: 768px) {
+// Page transition
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (min-width: 48.1rem) and (max-width: 76.8rem) {
   .app {
-    padding: 15px;
+    padding: $spacing-2xl;
+  }
+  
+  .app-header {
+    margin-bottom: $spacing-4xl;
+    padding-bottom: $spacing-2xl;
+  }
+  
+  .app-header h1 {
+    font-size: $font-size-lg;
+  }
+  
+  .app-subtitle {
+    font-size: $font-size-base;
   }
   
   .main-nav {
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: $spacing-4xl;
   }
   
-  .nav-link {
-    text-align: center;
+  .nav-tab {
+    padding: $spacing-lg $spacing-2xl;
+    font-size: $font-size-base;
+  }
+}
+
+@media (max-width: 48rem) {
+  .app {
+    padding: $spacing-xl $spacing-lg;
+  }
+  
+  .app-header {
+    margin-bottom: $spacing-3xl;
+    padding-bottom: $spacing-2xl;
+  }
+  
+  .app-header h1 {
+    font-size: $font-size-lg;
+  }
+  
+  .app-subtitle {
+    font-size: $font-size-sm;
+  }
+  
+  .main-nav {
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: $spacing-4xl;
+  }
+  
+  .nav-tab {
+    padding: $spacing-md $spacing-xl;
+    font-size: $font-size-sm;
   }
 }
 </style>

@@ -1,0 +1,109 @@
+@import './variables';
+@import './mixins';
+
+html {
+  font-size: 10px; // 1rem = 10px
+}
+
+body {
+  font-family: $font-family-sans;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-text-primary;
+  background-color: $color-background;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  @include heading-serif;
+  margin-top: 0;
+}
+
+h1 {
+  @include heading-h1;
+}
+
+h2 {
+  @include heading-h2;
+}
+
+h3 {
+  @include heading-h3;
+}
+
+p {
+  margin: 0 0 $spacing-lg 0;
+  line-height: $line-height-relaxed;
+  color: $color-text-secondary;
+}
+
+// Links
+a {
+  @include academic-link;
+  
+  &:focus {
+    outline: 0.2rem solid $color-primary;
+    outline-offset: 0.2rem;
+  }
+}
+
+// Lists
+ul, ol {
+  margin: 0 0 $spacing-lg 0;
+  padding-left: $spacing-2xl;
+  line-height: $line-height-relaxed;
+  color: $color-text-secondary;
+}
+
+li {
+  margin-bottom: $spacing-sm;
+}
+
+// Blockquotes
+blockquote {
+  margin: $spacing-2xl 0;
+  padding: $spacing-xl $spacing-2xl;
+  border-left: 0.3rem solid $color-primary;
+  background: $color-background-light;
+  font-style: italic;
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
+}
+
+// Code
+code {
+  font-family: $font-family-mono;
+  font-size: 0.9em;
+  background: $color-background-light;
+  padding: 0.2rem 0.4rem;
+  border-radius: $radius-sm;
+  color: $color-accent;
+}
+
+pre {
+  font-family: $font-family-mono;
+  background: $color-background-light;
+  padding: $spacing-lg;
+  border-radius: $radius-md;
+  overflow-x: auto;
+  line-height: $line-height-base;
+  
+  code {
+    background: transparent;
+    padding: 0;
+  }
+}
+
+// Dividers
+hr {
+  @include divider;
+}
+

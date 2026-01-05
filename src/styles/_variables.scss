@@ -1,0 +1,64 @@
+// Academic color palette
+$color-primary: #2c5282;
+$color-primary-hover: #1a365d;
+$color-primary-light: #4299e1;
+$color-secondary: #718096;
+$color-secondary-hover: #4a5568;
+$color-accent: #c53030;
+$color-accent-hover: #e53e3e;
+$color-error: #c53030;
+$color-text-primary: #1a202c;
+$color-text-secondary: #2d3748;
+$color-text-tertiary: #4a5568;
+$color-white: #ffffff;
+$color-background: #f7fafc;
+$color-background-light: #edf2f7;
+$color-background-cream: #faf8f3;
+$color-border: #e2e8f0;
+$color-border-light: #e2e8f0;
+$color-border-dark: #cbd5e0;
+$color-border-gray: #a0aec0;
+
+// Typography - Academic style
+$font-family-serif: Georgia, "Times New Roman", Times, serif;
+$font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-family-mono: "Courier New", Courier, monospace;
+
+$font-size-xs: 0.875rem;
+$font-size-sm: 1rem;
+$font-size-base: 1.125rem;
+$font-size-md: 1.5rem;
+$font-size-lg: 2rem;
+$font-size-xl: 2.5rem;
+$font-size-2xl: 3rem;
+
+$line-height-tight: 1.4;
+$line-height-base: 1.7;
+$line-height-relaxed: 1.8;
+
+// Spacing - Conservative academic style
+$spacing-xs: 0.4rem;
+$spacing-sm: 0.6rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.2rem;
+$spacing-xl: 1.5rem;
+$spacing-2xl: 2rem;
+$spacing-3xl: 2.5rem;
+$spacing-4xl: 3rem;
+$spacing-5xl: 4rem;
+
+$radius-sm: 0.4rem;
+$radius-md: 0.5rem;
+$radius-lg: 0.6rem;
+$radius-xl: 0.8rem;
+$radius-2xl: 1.2rem;
+
+$transition-base: 0.3s ease;
+
+$shadow-sm: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.08);
+$shadow-md: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.12);
+$shadow-lg: 0 0.8rem 1.6rem rgba(0, 0, 0, 0.1);
+
+$max-width-content: 90rem;
+$max-width-container: 120rem;
+

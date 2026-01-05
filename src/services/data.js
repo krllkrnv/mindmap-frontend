@@ -1,52 +1,93 @@
-// Сервис для работы с локальными данными терминов
-import termsData from '../data/terms.json'
+const API_BASE_URL = '/api'
 
 class TermsDataService {
-  getTerms(page = 1, perPage = 10, search = '') {
-    let filteredTerms = [...termsData]
-    
-    // Применяем поиск, если указан
-    if (search) {
-      const searchLower = search.toLowerCase()
-      filteredTerms = filteredTerms.filter(term => 
-        term.term.toLowerCase().includes(searchLower) ||
-        term.definition.toLowerCase().includes(searchLower) ||
-        (term.category && term.category.toLowerCase().includes(searchLower))
-      )
+  async getTerms(page = 1, perPage = 10, search = '') {
+    try {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        per_page: perPage.toString()
+      })
+      
+      if (search) {
+        params.append('search', search)
+      }
+      
+      const response = await fetch(`${API_BASE_URL}/terms?${params}`)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      return {
+        terms: data.terms || [],
+        total: data.pagination?.total || data.terms?.length || 0,
+        page: data.pagination?.page || page,
+        per_page: data.pagination?.per_page || perPage
+      }
+    } catch (error) {
+      console.error('Ошибка получения терминов:', error)
+      throw error
     }
-    
-    // Сортировка по ID (новые термины сверху)
-    filteredTerms.sort((a, b) => b.id - a.id)
-    
-    // Пагинация
-    const total = filteredTerms.length
-    const start = (page - 1) * perPage
-    const end = start + perPage
-    const paginatedTerms = filteredTerms.slice(start, end)
-    
-    return {
-      terms: paginatedTerms,
-      total: total,
-      page: page,
-      per_page: perPage
+  }
+
+  async getTerm(id) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/terms/${id}`)
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          return null
+        }
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      return await response.json()
+    } catch (error) {
+      console.error('Ошибка получения термина:', error)
+      throw error
     }
   }
 
-  getTerm(id) {
-    return termsData.find(term => term.id === parseInt(id)) || null
+  async searchTerms(query) {
+    try {
+      if (!query) {
+        return []
+      }
+      
+      const params = new URLSearchParams({ q: query })
+      const response = await fetch(`${API_BASE_URL}/search?${params}`)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      return data.terms || []
+    } catch (error) {
+      console.error('Ошибка поиска терминов:', error)
+      throw error
+    }
   }
 
-  searchTerms(query) {
-    const queryLower = query.toLowerCase()
-    return termsData.filter(term => 
-      term.term.toLowerCase().includes(queryLower) ||
-      term.definition.toLowerCase().includes(queryLower) ||
-      (term.category && term.category.toLowerCase().includes(queryLower))
-    )
+  async getAllTerms() {
+    try {
+      const data = await this.getTerms(1, 10000)
+      return data.terms || []
+    } catch (error) {
+      console.error('Ошибка получения всех терминов:', error)
+      throw error
+    }
   }
 
-  getAllTerms() {
-    return termsData
+  async findTermByName(name) {
+    try {
+      const allTerms = await this.getAllTerms()
+      return allTerms.find(t => t.term === name) || null
+    } catch (error) {
+      console.error('Ошибка поиска термина по названию:', error)
+      throw error
+    }
   }
 }
 
