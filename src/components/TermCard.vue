@@ -15,10 +15,6 @@
     </div>
     
     
-    <div class="term-actions">
-      <button @click="$emit('edit', term)" class="btn btn-edit">Редактировать</button>
-      <button @click="$emit('delete', term.id)" class="btn btn-delete">Удалить</button>
-    </div>
   </div>
 </template>
 
@@ -30,7 +26,6 @@ defineProps({
   }
 })
 
-defineEmits(['edit', 'delete'])
 
 </script>
 
@@ -97,42 +92,4 @@ defineEmits(['edit', 'delete'])
   margin-bottom: 4px;
 }
 
-.term-meta {
-  color: #7f8c8d;
-  font-size: 0.9em;
-  margin-bottom: 15px;
-}
-
-.term-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.btn-edit {
-  background: #f39c12;
-  color: white;
-}
-
-.btn-edit:hover {
-  background: #e67e22;
-}
-
-.btn-delete {
-  background: #e74c3c;
-  color: white;
-}
-
-.btn-delete:hover {
-  background: #c0392b;
-}
 </style>

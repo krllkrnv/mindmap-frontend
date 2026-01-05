@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  mindmap-vkr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mindmap-vkr
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    networks:
+      - mindmap-network
+
+networks:
+  mindmap-network:
+    driver: bridge
+

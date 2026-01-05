@@ -3,9 +3,6 @@
     <div class="header">
       <h1>Словарь терминов</h1>
       <div class="actions">
-        <button @click="$router.push('/terms/create')" class="btn btn-primary">
-          Добавить термин
-        </button>
         <button @click="$router.push('/graph')" class="btn btn-secondary">
           Граф связей
         </button>
@@ -25,8 +22,6 @@
         v-for="term in terms" 
         :key="term.id" 
         :term="term"
-        @edit="handleEdit"
-        @delete="handleDelete"
       />
     </div>
   </div>
@@ -35,7 +30,7 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '../services/api.js'
+import dataService from '../services/data.js'
 import TermCard from './TermCard.vue'
 
 export default {
@@ -49,36 +44,17 @@ export default {
     const loading = ref(true)
     const error = ref(null)
 
-    const loadTerms = async () => {
+    const loadTerms = () => {
       try {
         loading.value = true
         error.value = null
-        const data = await api.getTerms(1, 100) // Запрашиваем все термины
+        const data = dataService.getTerms(1, 100) // Запрашиваем все термины
         terms.value = data.terms // Берем массив терминов из ответа
       } catch (err) {
-        error.value = err.message
+        error.value = err.message || 'Ошибка загрузки терминов'
         console.error('Ошибка загрузки терминов:', err)
       } finally {
         loading.value = false
-      }
-    }
-
-    const handleEdit = (term) => {
-      router.push(`/terms/${term.id}/edit`)
-    }
-
-    const handleDelete = async (termId) => {
-      if (confirm('Вы уверены, что хотите удалить этот термин?')) {
-        try {
-          await api.deleteTerm(termId)
-          // Удаляем термин из локального списка
-          terms.value = terms.value.filter(term => term.id !== termId)
-          alert('Термин успешно удален')
-        } catch (err) {
-          error.value = err.message
-          console.error('Ошибка удаления термина:', err)
-          alert('Ошибка при удалении термина: ' + err.message)
-        }
       }
     }
 
@@ -89,9 +65,7 @@ export default {
     return {
       terms,
       loading,
-      error,
-      handleEdit,
-      handleDelete
+      error
     }
   }
 }

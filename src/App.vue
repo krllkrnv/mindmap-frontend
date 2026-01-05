@@ -8,9 +8,6 @@
       <router-link to="/terms" class="nav-link">
         Список терминов
       </router-link>
-      <router-link to="/terms/create" class="nav-link">
-        Добавить термин
-      </router-link>
       <router-link to="/graph" class="nav-link">
         Граф связей
       </router-link>

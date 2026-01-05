@@ -25,7 +25,7 @@
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import * as d3 from 'd3'
-import api from '../services/api.js'
+import dataService from '../services/data.js'
 
 // Router
 const router = useRouter()
@@ -267,8 +267,7 @@ const loadTerms = async () => {
   try {
     loading.value = true
     error.value = ''
-    const response = await api.getTerms(1, 100)
-    const terms = Array.isArray(response?.terms) ? response.terms : []
+    const terms = dataService.getAllTerms()
     if (terms.length === 0) {
       error.value = 'Нет терминов для отображения'
       return
