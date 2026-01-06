@@ -1,12 +1,9 @@
 const API_BASE_URL = '/api'
 
 class TermsDataService {
-  async getTerms(page = 1, perPage = 10, search = '') {
+  async getTerms(search = '') {
     try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        per_page: perPage.toString()
-      })
+      const params = new URLSearchParams()
       
       if (search) {
         params.append('search', search)
@@ -19,12 +16,7 @@ class TermsDataService {
       }
       
       const data = await response.json()
-      return {
-        terms: data.terms || [],
-        total: data.pagination?.total || data.terms?.length || 0,
-        page: data.pagination?.page || page,
-        per_page: data.pagination?.per_page || perPage
-      }
+      return data.terms || []
     } catch (error) {
       console.error('Ошибка получения терминов:', error)
       throw error
@@ -72,8 +64,7 @@ class TermsDataService {
 
   async getAllTerms() {
     try {
-      const data = await this.getTerms(1, 10000)
-      return data.terms || []
+      return await this.getTerms()
     } catch (error) {
       console.error('Ошибка получения всех терминов:', error)
       throw error

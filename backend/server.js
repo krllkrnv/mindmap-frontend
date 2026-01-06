@@ -21,11 +21,9 @@ try {
   process.exit(1);
 }
 
-// GET /api/terms - список терминов с пагинацией
+// GET /api/terms - список терминов
 app.get('/api/terms', (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const perPage = parseInt(req.query.per_page) || 10;
     const search = req.query.search || '';
 
     let filteredTerms = termsData;
@@ -39,19 +37,8 @@ app.get('/api/terms', (req, res) => {
       );
     }
 
-    const total = filteredTerms.length;
-    const startIndex = (page - 1) * perPage;
-    const endIndex = startIndex + perPage;
-    const paginatedTerms = filteredTerms.slice(startIndex, endIndex);
-
     res.json({
-      terms: paginatedTerms,
-      pagination: {
-        page,
-        per_page: perPage,
-        total,
-        total_pages: Math.ceil(total / perPage)
-      }
+      terms: filteredTerms
     });
   } catch (error) {
     console.error('Ошибка получения терминов:', error);
