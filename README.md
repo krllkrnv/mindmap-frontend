@@ -176,7 +176,7 @@ Backend API будет доступен по адресу: `http://localhost:800
 
 | Метод | URL | Описание |
 |-------|-----|----------|
-| GET | `/api/terms` | Получить список терминов с пагинацией |
+| GET | `/api/terms` | Получить список терминов |
 | GET | `/api/terms/{id}` | Получить конкретный термин |
 | POST | `/api/terms` | Создать новый термин |
 | PUT | `/api/terms/{id}` | Обновить термин |
@@ -188,7 +188,12 @@ Backend API будет доступен по адресу: `http://localhost:800
 
 #### Получение списка терминов
 ```bash
-curl -X GET "https://mindmap-vkr-backend.vercel.app/api/terms?page=1&per_page=10"
+curl -X GET "https://mindmap-vkr-backend.vercel.app/api/terms"
+```
+
+#### Поиск терминов
+```bash
+curl -X GET "https://mindmap-vkr-backend.vercel.app/api/terms?search=алгоритм"
 ```
 
 #### Создание нового термина
@@ -216,7 +221,6 @@ curl -X POST "https://mindmap-vkr-backend.vercel.app/api/terms" \
 2. **Поиск и фильтрация:**
    - ✅ Поиск по названию термина
    - ✅ Фильтрация по категориям
-   - ✅ Пагинация результатов
 
 3. **Визуализация связей:**
    - ✅ Интерактивная ментальная карта
