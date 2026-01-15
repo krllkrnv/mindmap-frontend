@@ -65,15 +65,8 @@ onMounted(async () => {
 })
 
 const handleCardClick = () => {
-  // Отправляем событие в Яндекс.Метрику при клике на карточку
-  if (abTestVariant.value) {
-    sendEvent('term_card_clicked', {
-      variant: abTestVariant.value,
-      termId: props.term.id,
-      termName: props.term.term
-    })
-  }
-
+  sendEvent('term_card_clicked')
+  
   navigateToTerm()
 }
 
@@ -93,7 +86,6 @@ const linkify = (text) => {
 .term-card {
   @include academic-card;
   margin-bottom: 0;
-  @include transition(border-color box-shadow);
   cursor: pointer;
   animation: fadeInUp 0.5s ease-out both;
 }
@@ -110,19 +102,20 @@ const linkify = (text) => {
 }
 
 .term-card:hover {
-  @include academic-card-hover;
-  border-color: $color-primary;
+  border-color: $color-border;
+  box-shadow: $shadow-sm;
 }
 
-// Усиленные эффекты для варианта B
 .term-card--variant-b {
+  cursor: pointer;
   @include transition(border-color box-shadow transform);
 }
 
 .term-card--variant-b:hover {
+  @include academic-card-hover;
+  border-color: $color-primary;
   box-shadow: $shadow-md;
   transform: translateY(-0.2rem);
-  border-color: $color-primary;
   
   .term-title--underlined {
     border-bottom-color: $color-primary-hover;
@@ -135,7 +128,7 @@ const linkify = (text) => {
 }
 
 .term-card:focus {
-  outline: none !important;
+  outline: none;
 }
 
 .term-header {

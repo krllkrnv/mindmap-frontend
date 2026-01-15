@@ -19,9 +19,9 @@ export const initABTest = () => {
 }
 
 // Отправка события в Яндекс.Метрику
-export const sendEvent = (goalName, params = {}) => {
+export const sendEvent = (goalName) => {
   if (window?.ym) {
-    window.ym(106281217, 'reachGoal', goalName, params)
+    window.ym(106281217, 'reachGoal', goalName)
   }
 }
 
@@ -33,4 +33,3 @@ export const saveVariant = (variant) => {
     // Игнорируем ошибки localStorage
   }
 }
-
