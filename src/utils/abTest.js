@@ -9,7 +9,7 @@ export const initABTest = () => {
   }
 
   return new Promise((resolve) => {
-    window.ymab('metrika.105194454', 'getFlags', (flags) => {
+    window.ymab('metrika.106281217', 'getFlags', (flags) => {
       const flag = Array.isArray(flags[AB_TEST_FLAG]) 
         ? flags[AB_TEST_FLAG][0] 
         : flags[AB_TEST_FLAG]
@@ -21,7 +21,7 @@ export const initABTest = () => {
 // Отправка события в Яндекс.Метрику
 export const sendEvent = (goalName, params = {}) => {
   if (window?.ym) {
-    window.ym(105194454, 'reachGoal', goalName, params)
+    window.ym(106281217, 'reachGoal', goalName, params)
   }
 }
 
