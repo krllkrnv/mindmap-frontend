@@ -6,7 +6,37 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// CORS с поддержкой Vercel доменов
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  process.env.FRONTEND_URL,
+  /^https:\/\/.*\.vercel\.app$/
+].filter(Boolean);
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    
+    const isAllowed = allowedOrigins.some(allowed => {
+      if (typeof allowed === 'string') {
+        return origin === allowed;
+      }
+      if (allowed instanceof RegExp) {
+        return allowed.test(origin);
+      }
+      return false;
+    });
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: false
+}));
+
 app.use(express.json());
 
 const termsPath = path.join(__dirname, 'data', 'terms.json');
@@ -95,17 +125,14 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Статические файлы фронтенда
-app.use(express.static(path.join(__dirname, 'public')));
+// Экспорт для Vercel Serverless Functions
+module.exports = app;
 
-// Fallback для SPA - все остальные запросы на index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.listen(PORT, () => {
-  console.log(`Сервер запущен на порту ${PORT}`);
-  console.log(`API доступен по адресу: http://localhost:${PORT}/api`);
-  console.log(`Фронтенд доступен по адресу: http://localhost:${PORT}`);
-});
+// Запуск сервера только если не в Vercel
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`Сервер запущен на порту ${PORT}`);
+    console.log(`API доступен по адресу: http://localhost:${PORT}/api`);
+  });
+}
 
