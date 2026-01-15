@@ -1,6 +1,6 @@
 // Утилита для работы с A/B тестированием через Яндекс.Метрику и Яндекс.ABT
 
-const AB_TEST_FLAG = 'term_card_enhancement'
+const AB_TEST_FLAG = 'term_card'
 
 // Инициализация A/B теста
 export const initABTest = () => {
