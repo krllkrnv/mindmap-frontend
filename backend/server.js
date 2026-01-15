@@ -51,6 +51,38 @@ try {
   process.exit(1);
 }
 
+// ========== ДОБАВЛЕННЫЕ МАРШРУТЫ ==========
+
+// 1. Корневой маршрут /
+app.get('/', (req, res) => {
+  res.json({
+    message: 'MindMap API Server',
+    branch: 'ab-testing',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      terms: '/api/terms',
+      search: '/api/search?q=query',
+      health: '/api/health',
+      termById: '/api/terms/:id'
+    }
+  });
+});
+
+// 2. Маршрут /api
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'API Endpoints',
+    available: [
+      'GET /api/terms',
+      'GET /api/search?q=query',
+      'GET /api/health',
+      'GET /api/terms/:id'
+    ]
+  });
+});
+
+// ========== ВАШИ СУЩЕСТВУЮЩИЕ МАРШРУТЫ ==========
+
 // GET /api/terms - список терминов
 app.get('/api/terms', (req, res) => {
   try {
@@ -135,4 +167,3 @@ if (process.env.VERCEL !== '1') {
     console.log(`API доступен по адресу: http://localhost:${PORT}/api`);
   });
 }
-
