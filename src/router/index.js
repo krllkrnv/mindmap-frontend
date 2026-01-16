@@ -6,7 +6,7 @@ import TermDetail from '../components/TermDetail.vue'
 const routes = [
   {
     path: '/',
-    redirect: '/terms'
+    redirect: '/graph'
   },
   {
     path: '/terms',
