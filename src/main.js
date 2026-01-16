@@ -4,3 +4,20 @@ import router from './router'
 import './styles/main.scss'
 
 createApp(App).use(router).mount('#app')
+
+// Yandex Metrika SPA support: send manual page hits on route changes
+router.isReady().then(() => {
+  if (typeof window !== 'undefined' && typeof window.ym === 'function') {
+    window.ym(
+      106281217,
+      'hit',
+      window.location.pathname + window.location.search + window.location.hash
+    )
+  }
+
+  router.afterEach((to) => {
+    if (typeof window !== 'undefined' && typeof window.ym === 'function') {
+      window.ym(106281217, 'hit', to.fullPath)
+    }
+  })
+})

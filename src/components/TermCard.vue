@@ -92,22 +92,22 @@
   
   const sendEvent = (goalName) => {
     if (typeof window === 'undefined') return
-    if (!abTestVariant.value) return
     
     const ym = window.ym
     if (typeof ym === 'function') {
       try {
-        ym(106281217, 'reachGoal', goalName, {
-          variant: abTestVariant.value
-        })
+        // Don't block goal sending on ABT. If variant is known, attach it.
+        const params = abTestVariant.value ? { variant: abTestVariant.value } : undefined
+        ym(106281217, 'reachGoal', goalName, params)
       } catch (e) {
         console.error('Yandex Metrika error:', e)
       }
     }
   }
   
-  onMounted(async () => {
-    await initABTest()
+  onMounted(() => {
+    // Initialize ABT in background; click tracking must not depend on it.
+    initABTest()
   })
   
   const handleCardClick = () => {
