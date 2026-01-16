@@ -129,11 +129,14 @@ const linkify = (text) => {
   .term-title {
     @include heading-h3;
     margin: 0;
+    text-decoration: none;
   }
   
-  .term-title--underlined {
-    border: none;
-    padding: 0;
+  .term-card--variant-b .term-title {
+    text-decoration: underline;
+    text-decoration-thickness: 0.15rem;
+    text-underline-offset: 0.25rem;
+    text-decoration-color: $color-primary;
   }
   
   .term-definition {
@@ -156,14 +159,6 @@ const linkify = (text) => {
     right: $spacing-xl;
     bottom: $spacing-xl;
     color: $color-primary;
-  
-    transition:
-      color 0.2s ease,
-      transform 0.2s ease;
-  }
-  
-  .term-card--variant-b:hover .term-link-button {
-    color: $color-primary-hover;
   }
   
   .term-external-icon {
@@ -181,4 +176,4 @@ const linkify = (text) => {
       bottom: $spacing-lg;
     }
   }
-  </style>
+  </style>  
