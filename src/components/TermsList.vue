@@ -29,6 +29,7 @@
         v-for="(term, index) in terms" 
         :key="term.id" 
         :term="term"
+        :ab-variant="abVariant"
         :style="{ animationDelay: `${index * 0.05}s` }"
       />
     </div>
@@ -40,6 +41,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import dataService from '../services/data.js'
 import TermCard from './TermCard.vue'
+import { useAbTest } from '../utils/abTest.js'
 
 export default {
   name: 'TermsList',
@@ -52,6 +54,10 @@ export default {
     const loading = ref(true)
     const error = ref(null)
     const searchQuery = ref('')
+    const { variant: abVariant, init: initAbTest } = useAbTest({
+      flagName: 'term_card',
+      metrikaId: 106281217
+    })
 
     const loadTerms = async (search = '') => {
       try {
@@ -75,6 +81,7 @@ export default {
     }
 
     onMounted(() => {
+      initAbTest()
       loadTerms()
     })
 
@@ -83,7 +90,8 @@ export default {
       loading,
       error,
       searchQuery,
-      handleSearch
+      handleSearch,
+      abVariant
     }
   }
 }
