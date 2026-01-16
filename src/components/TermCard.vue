@@ -91,7 +91,6 @@
   .term-card {
     @include academic-card;
     position: relative;
-    cursor: pointer;
   
     transform: translateY(0);
     will-change: transform;
@@ -118,6 +117,10 @@
     border-color: $color-primary;
     box-shadow: $shadow-md;
     transform: translateY(-0.25rem);
+  }
+  
+  .term-card--variant-b {
+    cursor: pointer;
   }
   
   .term-header {
