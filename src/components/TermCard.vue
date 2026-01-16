@@ -106,7 +106,7 @@
   })
   
   const handleCardClick = () => {
-    sendEvent('term_card_clicked')
+    sendEvent('term_clicked')
     navigateToTerm()
   }
   
