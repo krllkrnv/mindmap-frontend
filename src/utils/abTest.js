@@ -1,35 +1,32 @@
-// Утилита для работы с A/B тестированием через Яндекс.Метрику и Яндекс.ABT
+// src/composables/useAbTest.js
+import { ref } from 'vue'
 
-const AB_TEST_FLAG = 'term_card'
+export function useAbTest({ flagName, metrikaId }) {
+  const variant = ref(null)
+  const isResolved = ref(false)
 
-// Инициализация A/B теста
-export const initABTest = () => {
-  if (!window?.ymab) {
-    return Promise.resolve('A')
+  const init = () => {
+    if (typeof window === 'undefined') return
+
+    const ymab = window.ymab
+    if (!ymab) {
+      variant.value = 'A'
+      isResolved.value = true
+      return
+    }
+
+    try {
+      ymab(`metrika.${metrikaId}`, 'getFlags', (flags) => {
+        const raw = flags && flags[flagName]
+        const flag = Array.isArray(raw) ? raw[0] : raw
+        variant.value = flag === 'B' ? 'B' : 'A'
+        isResolved.value = true
+      })
+    } catch (e) {
+      variant.value = 'A'
+      isResolved.value = true
+    }
   }
 
-  return new Promise((resolve) => {
-    window.ymab('metrika.106281217', 'getFlags', (flags) => {
-      const flag = Array.isArray(flags[AB_TEST_FLAG]) 
-        ? flags[AB_TEST_FLAG][0] 
-        : flags[AB_TEST_FLAG]
-      resolve(flag === 'B' ? 'B' : 'A')
-    })
-  })
-}
-
-// Отправка события в Яндекс.Метрику
-export const sendEvent = (goalName) => {
-  if (window?.ym) {
-    window.ym(106281217, 'reachGoal', goalName)
-  }
-}
-
-// Сохранение варианта в localStorage
-export const saveVariant = (variant) => {
-  try {
-    localStorage.setItem('ab_test_variant', variant)
-  } catch (e) {
-    // Игнорируем ошибки localStorage
-  }
+  return { variant, isResolved, init }
 }

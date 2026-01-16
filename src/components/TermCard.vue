@@ -41,52 +41,85 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { initABTest, sendEvent, saveVariant } from '../utils/abTest.js'
-
-const props = defineProps({
-  term: {
-    type: Object,
-    required: true
-  }
-})
-
-const router = useRouter()
-const abTestVariant = ref(null)
-
-// Инициализация A/B теста
-onMounted(async () => {
-  if (typeof window === 'undefined') {
-    return
-  }
-
-  const variant = await initABTest()
-  if (variant) {
-    abTestVariant.value = variant
-    saveVariant(variant)
-  } else {
-    // Если не удалось получить вариант, используем A по умолчанию
-    abTestVariant.value = 'A'
-  }
-})
-
-const handleCardClick = () => {
-  sendEvent('term_card_clicked')
+  import { ref, onMounted } from 'vue'
+  import { useRouter } from 'vue-router'
   
-  navigateToTerm()
-}
-
-const navigateToTerm = () => {
-  router.push(`/terms/${props.term.id}`)
-}
-
-const linkify = (text) => {
-  if (!text) return ''
-  return text.replace(/(https?:\/\/\S+)/g, '<a href="$1" target="_blank" @click.stop>$1</a>')
-}
-
-</script>
+  const props = defineProps({
+    term: {
+      type: Object,
+      required: true
+    }
+  })
+  
+  const router = useRouter()
+  const abTestVariant = ref(null)
+  
+  const initABTest = () => {
+    if (typeof window === 'undefined') {
+      return Promise.resolve('A')
+    }
+  
+    const ymab = window.ymab
+    if (!ymab) {
+      abTestVariant.value = 'A'
+      return Promise.resolve('A')
+    }
+  
+    return new Promise((resolve) => {
+      try {
+        ymab('metrika.106281217', 'getFlags', (flags) => {
+          let raw = null
+          if (flags) {
+            if (flags.snippet_templates !== undefined) raw = flags.snippet_templates
+            else if (flags.term_card !== undefined) raw = flags.term_card
+            else {
+              const keys = Object.keys(flags)
+              if (keys.length === 1) raw = flags[keys[0]]
+            }
+          }
+  
+          const flag = Array.isArray(raw) ? raw[0] : raw
+          const variant = flag === 'B' ? 'B' : 'A'
+          abTestVariant.value = variant
+          resolve(variant)
+        })
+      } catch (e) {
+        abTestVariant.value = 'A'
+        resolve('A')
+      }
+    })
+  }
+  
+  const sendEvent = (goalName) => {
+    if (typeof window === 'undefined') return
+    const ym = window.ym
+    if (typeof ym === 'function') {
+      try {
+        ym(106281217, 'reachGoal', goalName)
+      } catch (e) {
+      }
+    }
+  }
+  
+  onMounted(async () => {
+    await initABTest()
+  })
+  
+  const handleCardClick = () => {
+    sendEvent('term_card_clicked')
+    navigateToTerm()
+  }
+  
+  const navigateToTerm = () => {
+    router.push(`/terms/${props.term.id}`)
+  }
+  
+  const linkify = (text) => {
+    if (!text) return ''
+    return text.replace(/(https?:\/\/\S+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" @click.stop>$1</a>')
+  }
+  </script>
+  
 
 <style lang="scss" scoped>
   .term-card {
