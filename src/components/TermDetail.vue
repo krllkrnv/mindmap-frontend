@@ -16,7 +16,6 @@
           <span class="breadcrumb-separator">/</span>
           <span class="breadcrumb-current">{{ term.term }}</span>
         </nav>
-        <router-link to="/terms" class="btn-back" aria-label="Вернуться к списку терминов">К списку</router-link>
       </nav>
 
       <div class="term-header">

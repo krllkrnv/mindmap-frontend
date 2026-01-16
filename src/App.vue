@@ -6,11 +6,11 @@
     </header>
 
     <nav class="main-nav" role="navigation" aria-label="Основная навигация">
-      <router-link to="/terms" class="nav-tab" aria-current="page">
-        Список терминов
-      </router-link>
       <router-link to="/graph" class="nav-tab" aria-current="page">
         Граф связей
+      </router-link>
+      <router-link to="/terms" class="nav-tab" aria-current="page">
+        Список терминов
       </router-link>
     </nav>
 
