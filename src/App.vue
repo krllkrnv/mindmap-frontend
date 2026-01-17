@@ -5,11 +5,11 @@
     </header>
 
     <nav class="main-nav" role="navigation" aria-label="Основная навигация">
-      <router-link to="/graph" class="nav-tab" aria-current="page">
-        Граф связей
-      </router-link>
       <router-link to="/terms" class="nav-tab" aria-current="page">
         Список терминов
+      </router-link>
+      <router-link to="/graph" class="nav-tab" aria-current="page">
+        Граф связей
       </router-link>
     </nav>
 
@@ -36,8 +36,6 @@
 
 .app-header {
   text-align: center;
-  margin-bottom: $spacing-4xl;
-  padding-bottom: $spacing-2xl;
   border-bottom: 0.05rem solid $color-border;
 }
 
