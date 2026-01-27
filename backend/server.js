@@ -21,14 +21,12 @@ try {
   process.exit(1);
 }
 
-// GET /api/terms - список терминов
 app.get('/api/terms', (req, res) => {
   try {
     const search = req.query.search || '';
 
     let filteredTerms = termsData;
 
-    // Поиск по названию термина
     if (search) {
       const searchLower = search.toLowerCase();
       filteredTerms = termsData.filter(term => 
@@ -46,7 +44,6 @@ app.get('/api/terms', (req, res) => {
   }
 });
 
-// GET /api/terms/:id - получить конкретный термин
 app.get('/api/terms/:id', (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -63,7 +60,6 @@ app.get('/api/terms/:id', (req, res) => {
   }
 });
 
-// GET /api/search - поиск терминов
 app.get('/api/search', (req, res) => {
   try {
     const query = req.query.q || '';
@@ -86,7 +82,6 @@ app.get('/api/search', (req, res) => {
   }
 });
 
-// GET /api/health - проверка состояния
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok',
@@ -95,10 +90,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Статические файлы фронтенда
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Fallback для SPA - все остальные запросы на index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });

@@ -35,7 +35,6 @@
   transition: $properties $transition-base;
 }
 
-// Academic style mixins
 @mixin heading-serif {
   font-family: $font-family-serif;
   font-weight: 600;
