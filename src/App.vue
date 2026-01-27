@@ -95,7 +95,6 @@
   animation: fadeIn 0.4s ease-in;
 }
 
-// Page transition
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

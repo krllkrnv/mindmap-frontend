@@ -5,7 +5,6 @@ import './styles/main.scss'
 
 createApp(App).use(router).mount('#app')
 
-// Yandex Metrika SPA support: send manual page hits on route changes
 router.isReady().then(() => {
   if (typeof window !== 'undefined' && typeof window.ym === 'function') {
     window.ym(

@@ -1,4 +1,3 @@
-// src/composables/useAbTest.js
 import { ref } from 'vue'
 
 export function useAbTest({ flagName, metrikaId }) {

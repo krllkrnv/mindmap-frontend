@@ -62,7 +62,6 @@
     const ym = window.ym
     if (typeof ym === 'function') {
       try {
-        // Variant is determined at page level (TermsList) and passed down.
         const params = props.abVariant ? { variant: props.abVariant } : undefined
         ym(106281217, 'reachGoal', goalName, params)
       } catch (e) {

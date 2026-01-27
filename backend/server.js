@@ -6,7 +6,6 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS с поддержкой Vercel доменов
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
@@ -15,7 +14,7 @@ const allowedOrigins = [
 ].filter(Boolean);
 
 app.use(cors({
-  origin: function (origin, callback) {
+  origin: function (origin, callback) 
     if (!origin) return callback(null, true);
     
     const isAllowed = allowedOrigins.some(allowed => {
@@ -51,9 +50,6 @@ try {
   process.exit(1);
 }
 
-// ========== ДОБАВЛЕННЫЕ МАРШРУТЫ ==========
-
-// 1. Корневой маршрут /
 app.get('/', (req, res) => {
   res.json({
     message: 'MindMap API Server',
@@ -68,7 +64,6 @@ app.get('/', (req, res) => {
   });
 });
 
-// 2. Маршрут /api
 app.get('/api', (req, res) => {
   res.json({
     message: 'API Endpoints',
@@ -81,16 +76,12 @@ app.get('/api', (req, res) => {
   });
 });
 
-// ========== ВАШИ СУЩЕСТВУЮЩИЕ МАРШРУТЫ ==========
-
-// GET /api/terms - список терминов
 app.get('/api/terms', (req, res) => {
   try {
     const search = req.query.search || '';
 
     let filteredTerms = termsData;
 
-    // Поиск по названию термина
     if (search) {
       const searchLower = search.toLowerCase();
       filteredTerms = termsData.filter(term => 
@@ -108,7 +99,6 @@ app.get('/api/terms', (req, res) => {
   }
 });
 
-// GET /api/terms/:id - получить конкретный термин
 app.get('/api/terms/:id', (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -125,7 +115,6 @@ app.get('/api/terms/:id', (req, res) => {
   }
 });
 
-// GET /api/search - поиск терминов
 app.get('/api/search', (req, res) => {
   try {
     const query = req.query.q || '';
@@ -148,7 +137,6 @@ app.get('/api/search', (req, res) => {
   }
 });
 
-// GET /api/health - проверка состояния
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok',
@@ -157,10 +145,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Экспорт для Vercel Serverless Functions
 module.exports = app;
 
-// Запуск сервера только если не в Vercel
 if (process.env.VERCEL !== '1') {
   app.listen(PORT, () => {
     console.log(`Сервер запущен на порту ${PORT}`);
