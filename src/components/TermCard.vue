@@ -62,7 +62,11 @@
     const ym = window.ym
     if (typeof ym === 'function') {
       try {
-        const params = props.abVariant ? { variant: props.abVariant } : undefined
+        const params = {
+          ...(props.abVariant ? { variant: props.abVariant } : {}),
+          path: document.location.pathname
+        }
+
         ym(106281217, 'reachGoal', goalName, params)
       } catch (e) {
         console.error('Yandex Metrika error:', e)
